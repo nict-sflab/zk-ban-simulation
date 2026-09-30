@@ -1,0 +1,6 @@
+xonsh 1_download.xonsh
+xonsh 2_unzip.xonsh
+pypy3 3_import.py
+pypy3 4_analyze.py
+xonsh 5_graph.xonsh
+xonsh 6_circuit.xonsh

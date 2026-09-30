@@ -1,0 +1,32 @@
+#!/usr/bin/env xonsh
+import sys
+sys.path.insert(0, '')
+
+from datetime import date, timedelta
+from pathlib import Path
+
+from sor.common import PeriodRange
+from sor.params import FILE_NAME, ZIP_FOLDER
+from sor.files import ZIPFilesStream
+
+
+range = PeriodRange()
+
+out_dir = Path(ZIP_FOLDER)
+
+mkdir -p @(out_dir)
+
+stream = ZIPFilesStream(range)
+for file in stream.files():
+    name = file.name()
+    path = file.path()
+
+    url = f"https://transparency.dsa.ec.europa.eu/explore-data/download/{name}"
+    if path.exists():
+        print(f"skip: {path}")
+        continue
+
+    print(f"download: {url}")
+    sleep 1
+
+    curl -fL -o @(path) @(url)

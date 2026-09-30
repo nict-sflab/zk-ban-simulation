@@ -1,0 +1,36 @@
+import sys
+sys.path.insert(0, '')
+
+from pathlib import Path
+from sor.params  import ZIP_FOLDER
+from sor.params import CSV_FOLDER
+
+src = Path(ZIP_FOLDER)
+out = Path(CSV_FOLDER)
+
+
+mkdir -p @(out)
+
+tasks = []
+
+for zip_path in src.rglob("*.zip"):
+    tasks.append((zip_path, out / zip_path.stem))
+
+seen = set()
+
+for zip_path, dest in tasks:
+    print(f"path: {dest}")
+    real_path = zip_path.resolve()
+
+    if real_path in seen:
+        continue
+
+    seen.add(real_path)
+
+    mkdir -p @(dest)
+
+    unzip -q -u @(zip_path) -d @(dest)
+
+    for child_zip in dest.rglob("*.zip"):
+        child_dest = child_zip.with_suffix("")
+        tasks.append((child_zip, child_dest))

@@ -1,0 +1,56 @@
+import sqlite3
+from datetime import date, timedelta
+
+DB = "twitch.sqlite"
+CURRENT = date(2026, 7, 31)
+START = date(2025, 7, 31)
+
+con = sqlite3.connect(DB)
+
+cap = []
+
+p = START
+
+while p < CURRENT:
+    period_prime = p.isoformat()
+
+    rows = con.execute(
+        """
+        SELECT COUNT(*)
+        FROM events
+        WHERE periodRevoke >= ?
+          AND periodRevoke < ?
+          AND periodAuth <= ?
+        GROUP BY periodAuth
+        """,
+        (
+            period_prime,
+            CURRENT.isoformat(),
+            period_prime,
+        ),
+    )
+
+    counts = []
+
+    for row in rows:
+        n = row[0]
+        counts.append(n)
+
+    counts.sort(reverse=True)
+
+    while len(cap) < len(counts):
+        cap.append(0)
+
+    for i in range(len(counts)):
+        n = counts[i]
+
+        if n > cap[i]:
+            cap[i] = n
+
+    p += timedelta(days=1)
+
+con.close()
+
+print("tau =", len(cap))
+print("delta_lambda_t =", cap)
+print("sum(delta_lambda_t) =", sum(cap))

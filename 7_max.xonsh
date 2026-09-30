@@ -1,0 +1,22 @@
+import pandas as pd
+
+file = "result.csv" 
+
+df = pd.read_csv(file) if file.endswith(".csv") else pd.read_excel(file)
+
+zkBanDelteLMax = df["ΔL(zk-BAN)"].max()
+zkBanTMax = df["T(zk-BAN)"].max()
+
+classicDelteLMax = df["ΔL_diff(related-work)"].max()
+classicTMax = df["T_diff(related-work)"].max()
+
+
+print("ΔL(zk-BAN) max:", zkBanDelteLMax)
+print("T(zk-BAN) macx:", zkBanTMax)
+
+print("ΔL(related-work) max:", classicDelteLMax)
+print("T(related-work) max:", classicTMax)
+
+
+print("ΔL reduction:", classicDelteLMax / zkBanDelteLMax)
+print("T reduction:", classicTMax / zkBanTMax)
